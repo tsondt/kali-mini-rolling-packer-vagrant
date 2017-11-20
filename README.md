@@ -12,6 +12,10 @@ SHA256SUM `fd29c24c541cf22de9f2fdb2f8f2d44635862db54b3caf0e30ca4172107a80ec`
 
 ```
 git clone https://github.com/tsondt/kali-mini-rolling-packer-vagrant
+cd kali-mini-rolling-packer-vagrant
+rm -f mini.iso
+curl -sOL http://http.kali.org/kali/dists/kali-rolling/main/installer-i386/current/images/netboot/mini.iso
+sed -i.bak "s/fd29c24c541cf22de9f2fdb2f8f2d44635862db54b3caf0e30ca4172107a80ec/$(openssl sha -sha256 mini.iso | cut -d" " -f2)/" kali-mini-rolling.json
 packer build kali-mini-rolling.json
 vagrant box add --name kali-mini-rolling kali-mini-rolling_virtualbox.box
 vagrant up
