@@ -10,7 +10,7 @@
     "disk_size" : 40960,
     "hard_drive_interface": "sata",
     "iso_url": "mini.iso",
-    "iso_checksum": "fd29c24c541cf22de9f2fdb2f8f2d44635862db54b3caf0e30ca4172107a80ec",
+    "iso_checksum": "e0f5fbf529878b15e4343f363ec775dbc8268e0a31ac48854f702ec0015b09d1",
     "iso_checksum_type": "sha256",
     "http_directory" : "http",
     "ssh_username": "root",
