@@ -1,35 +1,42 @@
 # Packer Template and Vagrantfile for Kali Linux Rolling
-Packer Template and Vagrantfile to spin up a minimal Kali Linux Rolling box (around 450MB) from the network install ISO.
+Packer Template and Vagrantfile to spin up a minimal Kali Linux Rolling box (around 800MB) from the network install ISO.
 
 ## Usages
 You will need [Packer](https://www.packer.io/docs/installation.html) and [Vagrant](https://www.vagrantup.com/docs/installation/) in your path.
 
-Kali Rolling network install ISO: [Download](http://http.kali.org/kali/dists/kali-rolling/main/installer-i386/current/images/netboot/mini.iso)
+Kali Rolling network install ISO: [ISO](https://http.kali.org/kali/dists/kali-rolling/main/installer-amd64/current/images/netboot/mini.iso) [SHA256SUMS](https://http.kali.org/kali/dists/kali-rolling/main/installer-amd64/current/images/netboot/SHA256SUMS)
 
-SHA256SUM `e0f5fbf529878b15e4343f363ec775dbc8268e0a31ac48854f702ec0015b09d1`
-
-(Notes: The iso file and its SHA256SUM provided in this repo are for reference only, it is recommended to download the iso image directly from `http.kali.org` and [verify its authenticity](http://docs.kali.org/introduction/download-official-kali-linux-images#sha1sums))
+(Notes: The ISO file and its SHA256SUM provided in this repo are for reference only, it is recommended to download the iso image directly from `http.kali.org` and [verify its authenticity](https://www.kali.org/docs/introduction/download-official-kali-linux-images/))
 
 ```
 git clone https://github.com/tsondt/kali-mini-rolling-packer-vagrant
 cd kali-mini-rolling-packer-vagrant
 rm -f mini.iso
-curl -sOL http://http.kali.org/kali/dists/kali-rolling/main/installer-i386/current/images/netboot/mini.iso
-sed -i.bak "s/e0f5fbf529878b15e4343f363ec775dbc8268e0a31ac48854f702ec0015b09d1/$(openssl sha1 -sha256 mini.iso | cut -d" " -f2)/" kali-mini-rolling.json
+curl -sOL https://http.kali.org/kali/dists/kali-rolling/main/installer-amd64/current/images/netboot/mini.iso
+curl -sOL https://http.kali.org/kali/dists/kali-rolling/main/installer-amd64/current/images/netboot/SHA256SUMS
+sed -i.bak "s/830b876858d87690993567d12c4bf5cf5135ec2cc659ef141d0baaf64be1cc55/$(openssl sha1 -sha256 mini.iso | cut -d" " -f2)/" kali-mini-rolling.json
 packer build kali-mini-rolling.json
 vagrant box add --name kali-mini-rolling kali-mini-rolling_virtualbox.box
 vagrant up
-ssh -p 2222 root@127.0.0.1
 ```
 
-Default SSH username/password is `root`/`t00r`.
-
-Install `i3` and VirtualBox Guest Additions:
+Default SSH username/password is `kali`/`kali`:
 
 ```
-apt update && apt install -y i3 virtualbox-guest-x11
-reboot
+ssh -p 2222 kali@127.0.0.1
 ```
+
+Install `i3`:
+
+```
+sudo apt update && sudo apt install -y lightdm kali-desktop-core kali-desktop-i3
+sudo reboot
+```
+
+Notes:
+- Add `display-setup-script=/usr/bin/VBoxClient-all` to `/etc/lightdm/lightdm.conf` for guest auto-resizing (if broken)
+- Run `sudo VboxClient --vmsvga` to fix auto-resizing if using `VMSVGA` (if broken)
+- https://www.virtualbox.org/ticket/11606#comment:79
 
 Clean up:
 
@@ -43,4 +50,5 @@ rm -f kali-mini-rolling_virtualbox.box
 1. https://github.com/Wh1t3Rh1n0/kali-unattended
 2. https://github.com/nickryand/kali-packer
 3. https://github.com/offensive-security/kali-linux-preseed
-
+4. https://www.packer.io/guides/automatic-operating-system-installs/preseed_ubuntu
+5. https://tools.kali.org/kali-metapackages

@@ -1,26 +1,25 @@
 {
   "builders": [{
     "type": "virtualbox-iso",
-    "guest_os_type": "Debian",
+    "guest_os_type": "Debian_64",
     "vboxmanage": [
       ["modifyvm", "{{.Name}}", "--memory", "1024"],
       ["modifyvm", "{{.Name}}", "--cpus", "1"],
       ["modifyvm", "{{.Name}}", "--audio", "none"]
     ],
-    "disk_size" : 40960,
+    "disk_size": 40960,
     "hard_drive_interface": "sata",
     "iso_url": "mini.iso",
-    "iso_checksum": "e0f5fbf529878b15e4343f363ec775dbc8268e0a31ac48854f702ec0015b09d1",
-    "iso_checksum_type": "sha256",
-    "http_directory" : "http",
-    "ssh_username": "root",
-    "ssh_password": "t00r",
-    "ssh_wait_timeout": "60m",
-    "shutdown_command": "shutdown -P -h now",
+    "iso_checksum": "sha256:830b876858d87690993567d12c4bf5cf5135ec2cc659ef141d0baaf64be1cc55",
+    "http_directory": "http",
+    "ssh_username": "kali",
+    "ssh_timeout": "60m",
+    "shutdown_command": "sudo shutdown -P -h now",
     "boot_wait": "5s",
-    "boot_command" : [
+    "boot_command": [
       "<esc><wait>",
       "auto ",
+      "PACKER_AUTHORIZED_KEY=\"{{ .SSHPublicKey }}\"<wait> ",
       "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
       "locale=en_US ",
       "keymap=us <enter>"
@@ -28,7 +27,7 @@
   }],
   "provisioners": [{
     "type": "shell",
-    "inline": ["sed -i -r '/^$|^#|deb cdrom/d' /etc/apt/sources.list"]
+    "inline": ["sudo sed -i -r '/^$|^#|deb cdrom/d' /etc/apt/sources.list"]
   }],
   "post-processors": [{
     "type": "vagrant",
